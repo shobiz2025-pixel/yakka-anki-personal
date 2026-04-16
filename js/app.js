@@ -530,12 +530,17 @@
   let currentSlides = [];
 
   function getSlideSource(filename) {
-    if (filename.startsWith('henkou_')) return '2026年の変更点';
-    if (filename.startsWith('jyuuyou_')) return '算定時の重要な情報';
-    if (filename.startsWith('hiyo_')) return '費用対効果制度の情報';
-    if (filename.startsWith('beppyo_')) return '別表';
-    if (filename.startsWith('ruiji2_')) return '類似薬効比較方式(Ⅱ)';
-    if (filename.startsWith('r6kaitei_')) return '2024年次改訂分';
+    // ファイル名から "_pN" のページ番号を抽出し、冊子ページ（PDF page + 1）を表示
+    const pageMatch = filename.match(/_p(\d+)\./);
+    const bookletPage = pageMatch ? ` 冊子p.${parseInt(pageMatch[1]) + 1}` : '';
+
+    if (filename.startsWith('henkou_')) return '2026年の変更点' + bookletPage;
+    if (filename.startsWith('jyuuyou_')) return '算定時の重要な情報' + bookletPage;
+    if (filename.startsWith('hiyo_')) return '費用対効果制度の情報' + bookletPage;
+    if (filename.startsWith('beppyo_')) return '別表' + bookletPage;
+    if (filename.startsWith('ruiji2_')) return '類似薬効比較方式(Ⅱ)' + bookletPage;
+    if (filename.startsWith('r6kaitei_')) return '2024年次改訂分' + bookletPage;
+    if (filename.startsWith('r4kaitei_')) return '令和４年度薬価改定' + bookletPage;
     if (filename.startsWith('qa_')) return '薬価算定の基準 Q&A';
     return '';
   }
