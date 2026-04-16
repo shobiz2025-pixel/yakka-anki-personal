@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>マイメモ | 薬価算定の基準</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/memo_page.css">
+</head>
+<body>
+
+<div class="sticky-top">
+  <div class="header">
+    <a href="index.html" class="header-back">&#8592; 戻る</a>
+    <h1>マイメモ</h1>
+    <button id="memoExportBtn" class="header-icon-btn" title="メモをエクスポート">&#128190;</button>
+    <label class="header-icon-btn" title="メモをインポート">&#128194;<input type="file" id="memoImportInput" accept=".json" style="display:none"></label>
+  </div>
+  <div class="search-bar">
+    <div class="search-wrap">
+      <input type="text" class="search-input" id="memoSearchInput" placeholder="項目名・メモ内容で検索...">
+      <button class="search-clear" id="memoSearchClear">&times;</button>
+    </div>
+  </div>
+  <div class="memo-filter-bar">
+    <button class="memo-filter-btn active" data-filter="all">すべて</button>
+    <button class="memo-filter-btn" data-filter="has-memo">メモあり</button>
+  </div>
+</div>
+
+<div id="memoList"></div>
+
+<script src="data/r08/data.js"></script>
+<script src="js/store.js"></script>
+<script src="js/memo_page.js"></script>
+</body>
+</html>

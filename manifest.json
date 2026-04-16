@@ -1,0 +1,11 @@
+{
+  "name": "薬価算定の基準 暗記ツール",
+  "short_name": "薬価暗記",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#eef4f9",
+  "theme_color": "#2d6a9f",
+  "icons": [
+    { "src": "icons/app_logo.png", "sizes": "2000x2000", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

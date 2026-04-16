@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1a73e8">
+<title>薬価算定 データ出力</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif;
+    background: #f5f5f5;
+    color: #333;
+    padding-bottom: 80px;
+  }
+  .header {
+    background: linear-gradient(135deg, #1a73e8, #1557b0);
+    color: #fff;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header h1 { font-size: 17px; flex: 1; }
+  .header-link {
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    padding: 6px 12px;
+    border: 1px solid rgba(255,255,255,0.4);
+    border-radius: 6px;
+  }
+  .header-link:hover { background: rgba(255,255,255,0.15); }
+
+  .section {
+    background: #fff;
+    margin: 16px;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .section h2 {
+    font-size: 15px;
+    color: #1a73e8;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e8f0fe;
+  }
+  .section p {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+
+  .version-select {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .version-btn {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .version-btn.active {
+    border-color: #1a73e8;
+    background: #e8f0fe;
+    color: #1a73e8;
+    font-weight: bold;
+  }
+  .version-btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  .version-btn .badge {
+    display: block;
+    font-size: 11px;
+    color: #999;
+    font-weight: normal;
+    margin-top: 2px;
+  }
+
+  .export-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .export-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.15s;
+    text-align: left;
+  }
+  .export-btn:active { transform: scale(0.98); }
+  .export-btn:hover { border-color: #1a73e8; background: #f8fbff; }
+  .export-btn .icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .export-btn .icon.blue { background: #e8f0fe; }
+  .export-btn .icon.green { background: #e6f4ea; }
+  .export-btn .icon.purple { background: #f3e8fd; }
+  .export-btn .icon.orange { background: #fef3e0; }
+  .export-btn .icon.red { background: #fde8e8; }
+  .export-btn .info { flex: 1; }
+  .export-btn .info .title { font-weight: 600; color: #333; }
+  .export-btn .info .desc { font-size: 12px; color: #888; margin-top: 2px; }
+
+  .chapter-filter {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  .chapter-btn {
+    padding: 6px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 16px;
+    background: #fff;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .chapter-btn.active {
+    background: #1a73e8;
+    color: #fff;
+    border-color: #1a73e8;
+  }
+
+  .status-msg {
+    text-align: center;
+    padding: 8px;
+    font-size: 13px;
+    color: #1a73e8;
+    display: none;
+  }
+  .status-msg.show { display: block; }
+
+  .info-box {
+    background: #fff9e6;
+    border: 1px solid #f0e0a0;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 12px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #665500;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>データ出力</h1>
+  <a href="index.html" class="header-link">暗記ツールへ</a>
+  <a href="strategy.html" class="header-link">戦略</a>
+  <a href="dashboard.html" class="header-link">📊</a>
+</div>
+
+<!-- 年度版選択 -->
+<div class="section">
+  <h2>年度版の選択</h2>
+  <div class="version-select" id="versionSelect">
+    <button class="version-btn active" data-version="r06">
+      令和6年度版
+      <span class="badge">2024年</span>
+    </button>
+    <button class="version-btn disabled" data-version="r08">
+      令和8年度版
+      <span class="badge">準備中</span>
+    </button>
+  </div>
+  <div class="info-box" id="versionInfo">
+    現在のデータ: 令和6年度版（令和6年3月29日付）
+  </div>
+</div>
+
+<!-- Word出力 -->
+<div class="section">
+  <h2>Word出力</h2>
+  <p>選択した年度版のデータをWord形式（.doc）でダウンロードします。</p>
+
+  <div class="export-grid">
+    <button class="export-btn" id="exportOriginal">
+      <div class="icon blue">📄</div>
+      <div class="info">
+        <div class="title">Q&A原本レイアウト</div>
+        <div class="desc">厚生労働省の原本に近いレイアウトでQ&A全文を出力</div>
+      </div>
+    </button>
+
+    <button class="export-btn" id="exportQaFull">
+      <div class="icon green">📋</div>
+      <div class="info">
+        <div class="title">Q&A全文（構造化）</div>
+        <div class="desc">問・答・解説を見やすく整理したQ&A全文</div>
+      </div>
+    </button>
+
+    <button class="export-btn" id="exportCommentary">
+      <div class="icon purple">💡</div>
+      <div class="info">
+        <div class="title">解説のみ抽出</div>
+        <div class="desc">（解説）が付されたQ&Aの問・答・解説を抽出</div>
+      </div>
+    </button>
+
+    <button class="export-btn" id="exportKijun">
+      <div class="icon orange">📖</div>
+      <div class="info">
+        <div class="title">基準本文</div>
+        <div class="desc">薬価算定の基準の定義・規定テキスト（112項目）</div>
+      </div>
+    </button>
+
+    <button class="export-btn" id="exportChapter">
+      <div class="icon red">📑</div>
+      <div class="info">
+        <div class="title">章別Q&A出力</div>
+        <div class="desc">選択した章のQ&Aのみを出力</div>
+      </div>
+    </button>
+  </div>
+
+  <!-- 章選択（章別出力用） -->
+  <div class="chapter-filter" id="chapterFilter" style="display:none; margin-top: 12px;">
+    <button class="chapter-btn active" data-chapter="第１章">第１章</button>
+    <button class="chapter-btn" data-chapter="第２章">第２章</button>
+    <button class="chapter-btn" data-chapter="第３章">第３章</button>
+    <button class="chapter-btn" data-chapter="第４章">第４章</button>
+  </div>
+
+  <div class="status-msg" id="statusMsg"></div>
+</div>
+
+<!-- テキスト出力 -->
+<div class="section">
+  <h2>テキスト出力</h2>
+  <p>クリップボードにコピー、またはテキストファイルとしてダウンロードします。</p>
+
+  <div class="export-grid">
+    <button class="export-btn" id="exportTextQa">
+      <div class="icon blue">📝</div>
+      <div class="info">
+        <div class="title">Q&Aテキスト（全文）</div>
+        <div class="desc">プレーンテキストでQ&A全文をコピー/ダウンロード</div>
+      </div>
+    </button>
+
+    <button class="export-btn" id="exportTextCommentary">
+      <div class="icon purple">📝</div>
+      <div class="info">
+        <div class="title">解説テキスト</div>
+        <div class="desc">プレーンテキストで解説部分のみをコピー/ダウンロード</div>
+      </div>
+    </button>
+  </div>
+
+  <div class="status-msg" id="statusMsgText"></div>
+</div>
+
+<!-- 令和8年度版について -->
+<div class="section">
+  <h2>令和8年度版の準備について</h2>
+  <div class="info-box">
+    令和8年度版のデータは <code>data/r08/</code> ディレクトリに以下の構造で配置してください：
+    <br><br>
+    <code>
+    data/r08/<br>
+    ├── data.js &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（QA_DATA_R08）<br>
+    ├── qa_text_01.js〜07.js<br>
+    ├── qa_text_index.js （QA_TEXT_ALL_R08）<br>
+    └── slides/ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;（スライド画像）
+    </code>
+    <br><br>
+    令和6年度版と同一の構造でファイルを作成し、グローバル変数名を
+    <code>QA_DATA_R08</code>、<code>QA_TEXT_ALL_R08</code> としてください。
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="data.js"></script>
+<script src="js/qa_text_01.js"></script>
+<script src="js/qa_text_02.js"></script>
+<script src="js/qa_text_03.js"></script>
+<script src="js/qa_text_04.js"></script>
+<script src="js/qa_text_05.js"></script>
+<script src="js/qa_text_06.js"></script>
+<script src="js/qa_text_07.js"></script>
+<script src="js/qa_text_index.js"></script>
+<script src="js/version_config.js"></script>
+<script src="js/qa_parser.js"></script>
+<script src="js/word_export.js"></script>
+<script>
+(function() {
+  'use strict';
+
+  var selectedVersion = VersionConfig.getCurrentVersionId();
+  var selectedChapter = '第１章';
+
+  function getQaData() { return VersionConfig.getQaData(); }
+  function getQaTextAll() { return VersionConfig.getQaTextAll(); }
+  function getVersionLabel() { return VersionConfig.getCurrentVersion().label; }
+
+  // 年度版切り替え
+  document.getElementById('versionSelect').addEventListener('click', function(e) {
+    var btn = e.target.closest('.version-btn');
+    if (!btn || btn.classList.contains('disabled')) return;
+    var vid = btn.dataset.version;
+
+    if (!VersionConfig.isVersionReady(vid)) {
+      showStatus('statusMsg', vid === 'r08' ? '令和8年度版のデータはまだ準備中です' : 'データが見つかりません');
+      return;
+    }
+
+    selectedVersion = vid;
+    VersionConfig.setCurrentVersion(vid);
+
+    document.querySelectorAll('.version-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.version === vid);
+    });
+
+    var v = VersionConfig.getCurrentVersion();
+    document.getElementById('versionInfo').textContent =
+      '現在のデータ: ' + v.label + (v.qaDate ? '（' + v.qaDate + '付）' : '');
+  });
+
+  // 章選択
+  document.getElementById('chapterFilter').addEventListener('click', function(e) {
+    var btn = e.target.closest('.chapter-btn');
+    if (!btn) return;
+    selectedChapter = btn.dataset.chapter;
+    document.querySelectorAll('.chapter-btn').forEach(function(b) {
+      b.classList.toggle('active', b.dataset.chapter === selectedChapter);
+    });
+  });
+
+  // 章別出力ボタンのトグル
+  document.getElementById('exportChapter').addEventListener('click', function() {
+    var filter = document.getElementById('chapterFilter');
+    if (filter.style.display === 'none') {
+      filter.style.display = 'flex';
+      return;
+    }
+    showStatus('statusMsg', 'エクスポート中...');
+    setTimeout(function() {
+      WordExport.exportChapterQa(getQaData(), getQaTextAll(), selectedChapter, getVersionLabel());
+      showStatus('statusMsg', selectedChapter + ' のQ&Aをダウンロードしました');
+    }, 100);
+  });
+
+  // Word出力ボタン
+  document.getElementById('exportOriginal').addEventListener('click', function() {
+    showStatus('statusMsg', 'エクスポート中...');
+    setTimeout(function() {
+      WordExport.exportOriginalLayout(getQaData(), getQaTextAll(), getVersionLabel());
+      showStatus('statusMsg', 'Q&A原本レイアウトをダウンロードしました');
+    }, 100);
+  });
+
+  document.getElementById('exportQaFull').addEventListener('click', function() {
+    showStatus('statusMsg', 'エクスポート中...');
+    setTimeout(function() {
+      WordExport.exportQaFull(getQaData(), getQaTextAll(), getVersionLabel());
+      showStatus('statusMsg', 'Q&A全文をダウンロードしました');
+    }, 100);
+  });
+
+  document.getElementById('exportCommentary').addEventListener('click', function() {
+    showStatus('statusMsg', 'エクスポート中...');
+    setTimeout(function() {
+      WordExport.exportCommentaryOnly(getQaData(), getQaTextAll(), getVersionLabel());
+      showStatus('statusMsg', '解説集をダウンロードしました');
+    }, 100);
+  });
+
+  document.getElementById('exportKijun').addEventListener('click', function() {
+    showStatus('statusMsg', 'エクスポート中...');
+    setTimeout(function() {
+      WordExport.exportKijunText(getQaData(), getVersionLabel());
+      showStatus('statusMsg', '基準本文をダウンロードしました');
+    }, 100);
+  });
+
+  // テキスト出力
+  document.getElementById('exportTextQa').addEventListener('click', function() {
+    var allParsed = QaParser.parseAll(getQaData(), getQaTextAll());
+    var text = '';
+    for (var i = 0; i < allParsed.length; i++) {
+      text += '【' + allParsed[i].item.title + '】\n';
+      text += QaParser.formatAsOriginalLayout(allParsed[i].questions);
+      text += '\n';
+    }
+    copyOrDownloadText(text, '薬価算定Q&A_' + getVersionLabel() + '.txt', 'statusMsgText');
+  });
+
+  document.getElementById('exportTextCommentary').addEventListener('click', function() {
+    var allParsed = QaParser.parseAll(getQaData(), getQaTextAll());
+    var text = '';
+    for (var i = 0; i < allParsed.length; i++) {
+      var commentary = QaParser.extractCommentary(allParsed[i].questions);
+      if (commentary.trim()) {
+        text += '【' + allParsed[i].item.title + '】\n';
+        text += commentary + '\n';
+      }
+    }
+    copyOrDownloadText(text, '薬価算定Q&A_解説_' + getVersionLabel() + '.txt', 'statusMsgText');
+  });
+
+  function copyOrDownloadText(text, filename, statusId) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function() {
+        showStatus(statusId, 'クリップボードにコピーしました（' + text.length + '文字）');
+      }).catch(function() {
+        downloadTextFile(text, filename, statusId);
+      });
+    } else {
+      downloadTextFile(text, filename, statusId);
+    }
+  }
+
+  function downloadTextFile(text, filename, statusId) {
+    var blob = new Blob(['\ufeff' + text], { type: 'text/plain;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function() {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+    showStatus(statusId, filename + ' をダウンロードしました');
+  }
+
+  function showStatus(id, msg) {
+    var el = document.getElementById(id);
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(function() { el.classList.remove('show'); }, 3000);
+  }
+})();
+</script>
+</body>
+</html>

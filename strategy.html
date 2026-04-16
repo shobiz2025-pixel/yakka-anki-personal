@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1a73e8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>薬価算定 戦略ツール</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/strategy.css">
+</head>
+<body>
+
+<div class="header">
+  <h1>薬価算定 戦略ツール</h1>
+  <a href="index.html" class="header-link">暗記</a>
+  <a href="dashboard.html" class="header-link">📊</a>
+</div>
+
+<!-- ===== Axis Selection (top-level) ===== -->
+<div id="axisSelection" class="axis-selection">
+  <h2 class="axis-title">対象医薬品を選択</h2>
+  <p class="axis-description">薬価算定の対象が未収載品か既収載品かにより、チェック項目と戦略が異なります。</p>
+  <div class="axis-cards">
+    <button class="axis-card" data-axis="unlisted" id="btnUnlisted">
+      <div class="axis-card-icon">📋</div>
+      <div class="axis-card-label">未収載品</div>
+      <div class="axis-card-sub">新規収載時の薬価算定</div>
+      <ul class="axis-card-points">
+        <li>比較薬の選定</li>
+        <li>算定方式の決定</li>
+        <li>補正加算の獲得</li>
+        <li>外国平均価格調整</li>
+      </ul>
+    </button>
+    <button class="axis-card" data-axis="listed" id="btnListed">
+      <div class="axis-card-icon">🔄</div>
+      <div class="axis-card-label">既収載品</div>
+      <div class="axis-card-sub">薬価改定・維持戦略</div>
+      <ul class="axis-card-points">
+        <li>新薬創出等加算</li>
+        <li>再算定リスク管理</li>
+        <li>長期収載品ルール</li>
+        <li>収載後の加算機会</li>
+      </ul>
+    </button>
+  </div>
+</div>
+
+<!-- ===== Main Tool Area (after axis selection) ===== -->
+<div id="mainTool" class="main-tool" style="display:none;">
+
+  <!-- Tab navigation -->
+  <div class="tool-tabs">
+    <button class="tool-tab active" data-tab="checklist">事前チェック</button>
+    <button class="tool-tab" data-tab="process">算定プロセス</button>
+    <button class="tool-tab" data-tab="components">固定/変動</button>
+    <button class="tool-tab" data-tab="strategy">戦略</button>
+  </div>
+
+  <!-- Axis indicator -->
+  <div class="axis-indicator" id="axisIndicator">
+    <span class="axis-badge" id="axisBadge"></span>
+    <button class="axis-change-btn" id="axisChangeBtn">切替</button>
+  </div>
+
+  <!-- Tab: Checklist -->
+  <div class="tab-content active" id="tab-checklist">
+    <div class="checklist-container" id="checklistContainer"></div>
+    <div class="checklist-result" id="checklistResult" style="display:none;">
+      <h3>チェック結果サマリ</h3>
+      <div id="checklistSummary"></div>
+    </div>
+  </div>
+
+  <!-- Tab: Process -->
+  <div class="tab-content" id="tab-process">
+    <div class="process-container" id="processContainer"></div>
+  </div>
+
+  <!-- Tab: Components -->
+  <div class="tab-content" id="tab-components">
+    <div class="components-container" id="componentsContainer"></div>
+  </div>
+
+  <!-- Tab: Strategy -->
+  <div class="tab-content" id="tab-strategy">
+    <div class="strategy-container" id="strategyContainer"></div>
+  </div>
+
+</div>
+
+<!-- Q&A Reference Modal -->
+<div class="qa-modal-overlay" id="qaModal" style="display:none;">
+  <div class="qa-modal">
+    <div class="qa-modal-header">
+      <h3 id="qaModalTitle">関連Q&A</h3>
+      <button class="qa-modal-close" id="qaModalClose">&times;</button>
+    </div>
+    <div class="qa-modal-body" id="qaModalBody"></div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="js/qa_text_01.js"></script>
+<script src="js/qa_text_02.js"></script>
+<script src="js/qa_text_03.js"></script>
+<script src="js/qa_text_04.js"></script>
+<script src="js/qa_text_05.js"></script>
+<script src="js/qa_text_06.js"></script>
+<script src="js/qa_text_07.js"></script>
+<script src="js/qa_text_index.js"></script>
+<script src="js/qa_parser.js"></script>
+<script src="js/strategy_data.js"></script>
+<script src="js/strategy.js"></script>
+</body>
+</html>

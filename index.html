@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#2d6a9f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/app_logo.png">
+<title>薬価算定の基準 暗記ツール</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="sticky-top">
+<div class="header">
+  <img src="icons/app_logo.png" class="header-logo" alt="ロゴ">
+  <h1>薬価算定の基準</h1>
+  <span class="count" id="viewCount">0/112</span>
+  <a href="memo.html" class="header-link">&#x1F4DD; メモ</a>
+  <a href="dashboard.html" class="header-link">&#x1F4CA;</a>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+<div class="search-bar">
+  <div class="search-wrap">
+    <input type="text" class="search-input" id="searchInput" placeholder="キーワードで検索...">
+    <button class="search-clear" id="searchClear" aria-label="検索クリア">&times;</button>
+  </div>
+</div>
+<div class="filter-bar" id="filterBar">
+  <button class="filter-btn active" data-filter="all">すべて</button>
+  <button class="filter-btn" id="qaAllBtn" data-filter="qa-all">Q&amp;A ALL</button>
+  <button class="filter-btn" data-filter="第１章">第１章 定義</button>
+  <button class="filter-btn" data-filter="第２章">第２章 新規収載品</button>
+<button class="filter-btn" data-filter="第３章">第３章 既収載品</button>
+  <button class="filter-btn" data-filter="第４章">第４章 実施時期等</button>
+</div>
+</div><!-- /sticky-top -->
+<div class="question-list" id="questionList"></div>
+<div class="qa-all-view" id="qaAllView" style="display:none;"></div>
+
+<!-- Scroll to top button -->
+<button id="scrollTopBtn" class="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'});" aria-label="ページトップへ">▲</button>
+
+<!-- Answer overlay -->
+<div class="overlay" id="overlay">
+  <div class="overlay-backdrop" id="overlayBackdrop"></div>
+  <div class="overlay-panel">
+    <div class="drag-handle" id="dragHandle"><div class="drag-handle-bar"></div></div>
+    <div class="overlay-header">
+      <div class="overlay-header-text">
+        <div class="overlay-breadcrumb" id="overlayBreadcrumb"></div>
+        <span class="q-label" id="overlayTitle"></span>
+      </div>
+      <button class="close-btn" id="closeBtn">&times;</button>
+    </div>
+    <div class="overlay-body" id="overlayBody">
+      <!-- Tab indicator above swipeable content -->
+      <div class="content-tabs" id="contentTabs">
+        <span class="content-tab active" data-page="0">薬価算定の基準</span>
+        <span class="content-tab" data-page="1">Q&amp;A</span>
+        <span class="content-tab" data-page="2" id="memoTab">メモ</span>
+      </div>
+      <!-- Swipeable text area: 解説 ←→ Q&A ←→ メモ -->
+      <div class="content-swiper" id="contentSwiper">
+        <div class="content-page" id="answerPage">
+          <div class="answer-text" id="answerText"></div>
+        </div>
+        <div class="content-page" id="qaTextPage">
+          <div class="qa-text-content" id="qaTextContent"></div>
+        </div>
+        <div class="content-page" id="memoPage">
+          <div class="memo-tab-inner">
+            <div class="memo-tab-header">自分メモ <span class="memo-saved" id="memoSaved"></span></div>
+            <textarea class="memo-tab-textarea" id="memoTextarea" placeholder="この項目のメモを入力できます（自動保存）"></textarea>
+          </div>
+        </div>
+      </div>
+      <!-- Slides always visible below -->
+      <div class="slides-section" id="slidesSection"></div>
+    </div>
+    <div class="assessment-bar">
+      <button class="assess-btn" data-mark="○">○</button>
+      <button class="assess-btn" data-mark="△">△</button>
+      <button class="assess-btn" data-mark="×">×</button>
+    </div>
+    <div class="overlay-nav">
+      <button class="nav-btn" id="prevBtn">&#9664; 前へ</button>
+      <button class="nav-btn" id="nextBtn">次へ &#9654;</button>
+    </div>
+  </div>
+</div>
+
+<!-- Fullscreen image viewer -->
+<div class="img-viewer" id="imgViewer">
+  <button class="img-viewer-close" id="imgViewerClose">&times;</button>
+  <img id="imgViewerImg" src="" alt="">
+</div>
+
+<script src="data/r08/data.js"></script>
+<script src="js/qa_text_r8_01.js"></script>
+<script src="js/qa_text_r8_02.js"></script>
+<script src="js/qa_text_r8_03.js"></script>
+<script src="js/qa_text_r8_04.js"></script>
+<script src="js/qa_text_r8_05.js"></script>
+<script src="js/qa_text_r8_06.js"></script>
+<script src="js/qa_text_r8_07.js"></script>
+<script src="js/qa_text_r8_08.js"></script>
+<script src="data/r08/qa_text_index.js"></script>
+<script src="js/qa_parser.js"></script>
+<script src="js/word_export.js"></script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

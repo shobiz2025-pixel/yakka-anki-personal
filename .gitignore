@@ -1,0 +1,14 @@
+# 生成スクリプト（公開不要）
+gen_r08.py
+gen_r08_full.py
+
+# Claude Code
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# エディタ
+.vscode/
+*.swp

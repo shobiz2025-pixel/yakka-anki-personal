@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1a73e8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>ダッシュボード - 薬価暗記</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<div class="header">
+  <a href="index.html" class="header-link">← 戻る</a>
+  <h1>ダッシュボード</h1>
+  <a href="strategy.html" class="header-link">戦略</a>
+  <a href="export.html" class="header-link">出力</a>
+</div>
+
+<div class="dash-container">
+  <div class="summary-cards" id="summaryCards"></div>
+  <div id="chapterProgress"></div>
+  <div class="calendar-section">
+    <div class="section-title">学習カレンダー</div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+    <div class="calendar-legend">
+      少<div class="calendar-cell"></div><div class="calendar-cell lv1"></div><div class="calendar-cell lv2"></div><div class="calendar-cell lv3"></div><div class="calendar-cell lv4"></div>多
+    </div>
+  </div>
+  <div class="items-section">
+    <div class="section-title">苦手リスト（要復習）</div>
+    <div id="weakItems"></div>
+  </div>
+  <div class="items-section">
+    <div class="section-title">閲覧回数ランキング</div>
+    <div id="rankingItems"></div>
+  </div>
+  <div class="reset-section">
+    <button class="reset-btn" id="resetBtn">学習データをリセット</button>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="js/store.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>
